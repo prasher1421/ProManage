@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1034617247455",
+    "project_id": "promanage1421",
+    "storage_bucket": "promanage1421.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034617247455:android:df818e9a171cbd12c5fb6a",
+        "android_client_info": {
+          "package_name": "ar.prasher.promanage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKM8F5-buTf4IErcmjspELe8H_VXtgS74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
