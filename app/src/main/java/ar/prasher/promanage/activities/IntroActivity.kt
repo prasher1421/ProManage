@@ -1,6 +1,8 @@
 package ar.prasher.promanage.activities
 
+import android.app.Dialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -22,6 +24,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.OAuthProvider
 
 class IntroActivity : BaseActivity() {
 
@@ -30,9 +33,12 @@ class IntroActivity : BaseActivity() {
     private var etEmail : EditText? = null
     private var tvLogin : TextView? = null
     private var googleLogin : CardView? = null
+    private var twitterLogin : CardView? = null
 
     private lateinit var auth : FirebaseAuth
     private lateinit var mGoogleSignInClient : GoogleSignInClient
+    private val provider = OAuthProvider.newBuilder("twitter.com")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +54,7 @@ class IntroActivity : BaseActivity() {
         etPassword = findViewById(R.id.et_password)
         tvLogin = findViewById(R.id.tv_login)
         googleLogin = findViewById(R.id.google_login)
+        twitterLogin = findViewById(R.id.twitter_login)
 
         tvLogin?.setOnClickListener {
             signInUserWithEmailAndPassword()
@@ -55,6 +62,10 @@ class IntroActivity : BaseActivity() {
 
         googleLogin?.setOnClickListener {
             signInGoogle()
+        }
+
+        twitterLogin?.setOnClickListener {
+            signInTwitter()
         }
 
         tvSignUp?.setOnClickListener {
@@ -71,6 +82,7 @@ class IntroActivity : BaseActivity() {
 
 
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -113,7 +125,7 @@ class IntroActivity : BaseActivity() {
                     val registeredEmail = account.email!!
                     val registeredName = account.displayName!!
 
-                    val user = User(firebaseUser.uid,registeredName, registeredEmail)
+                    val user = User(firebaseUser.uid,registeredName, registeredEmail,account.photoUrl.toString())
                     FirestoreClass().registerUser(this,user)
 
                     FirestoreClass().signInUser(this)
@@ -141,7 +153,7 @@ class IntroActivity : BaseActivity() {
                     hideProgressDialog()
                     if(task.isSuccessful){
                         //Sign in Success, update your ui with the same user
-                        Log.d("Sign in","Successful")
+                        Log.d("Sign in with Email","Successful")
                         FirestoreClass().signInUser(this)
                     }
                     else{
@@ -192,5 +204,62 @@ class IntroActivity : BaseActivity() {
         val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, Constants.GOOGLE_SIGN_IN_REQ_CODE)
     }
+
+    private fun signInTwitter() {
+        val pendingResultTask = auth.pendingAuthResult
+        if (pendingResultTask != null){
+            showProgressDialog("Please Wait")
+            //there is something already here Finish the sign in
+            pendingResultTask
+                .addOnSuccessListener {
+                    FirestoreClass().signInUser(this)
+                }
+                .addOnFailureListener {
+
+                }
+        } else{
+            startTwitterSignIn()
+        }
+    }
+
+    private fun startTwitterSignIn() {
+        auth.startActivityForSignInWithProvider(this,provider.build())
+            .addOnSuccessListener {authResult ->
+
+                showProgressDialog("Please Wait")
+
+                val credential = authResult.credential
+                auth.signInWithCredential(credential!!)
+                    .addOnCompleteListener {task ->
+                        hideProgressDialog()
+
+                        if (task.isSuccessful){
+
+                            val firebaseUser : FirebaseUser = task.result!!.user!!
+                            val profileImage = authResult.user?.photoUrl!!
+                            val registeredName = authResult.user?.displayName!!
+
+                            val user = User(firebaseUser.uid,registeredName, "",profileImage.toString())
+                            FirestoreClass().registerUser(this,user)
+
+                            FirestoreClass().signInUser(this)
+
+                        }else {
+                            Toast.makeText(
+                                this,
+                                "Sign in Failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+
+                    }
+
+            }
+            .addOnFailureListener {e ->
+                Log.e("Error Twitter Sign In",e.toString())
+            }
+    }
+
 
 }

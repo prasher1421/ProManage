@@ -11,6 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProManage"
         tools:targetApi="31">
+
+
         <activity
             android:name=".activities.BaseActivity"
             android:exported="false" />
