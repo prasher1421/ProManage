@@ -13,4 +13,17 @@
     <string name="details_request">Please enter your details</string>
     <string name="please_press_back_again">Please Press Back Again to Exit</string>
     <string name="web_client_id">1034617247455-f2jg4q0equl2badgg3goiq49qpi8nccg.apps.googleusercontent.com</string>
+    <string name="no_boards_are_available">No Boards are Available</string>
+    <string name="nav_my_profile">My Profile</string>
+    <string name="nav_sign_out">Sign Out</string>
+
+<!--    <string name="facebook_app_id">1035361384094926</string>-->
+<!--    <string name="fb_login_protocol_scheme">a01fca3e3340bd31e7d93acfa788c0e0</string>-->
+<!--    <string name="facebook_client_token">56c77a913201b4eb03e6a0a7553af31f</string>-->
+
+    <string name="twitter_api_key">wSBjiWqB9P4c8sf2zosmX0slY</string>
+    <string name="twitter_api_secret">mjO3gLn3N8vOkopPYvyY5w9Cvx1UMfHmpHCzlQ9HhFMlgttrJi</string>
+    <string name="twitter_client_id">ODk5b29vV3FHdnFNcG4xYnZPZkI6MTpjaQ</string>
+    <string name="twitter_client_secret">BY2ADpMRa6o4jut_S5jNWo-xvTHNz5VlYlseuPUZ2T2Ohvkt3T</string>
+    <string name="firebase_twitter_callback_url">https://promanage1421.firebaseapp.com/__/auth/handler</string>
 </resources>
