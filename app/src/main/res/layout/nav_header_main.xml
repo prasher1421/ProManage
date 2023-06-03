@@ -8,26 +8,35 @@
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iv_user_image"
+
+    <androidx.cardview.widget.CardView
         android:layout_width="@dimen/nav_image_size"
         android:layout_height="@dimen/nav_image_size"
         android:layout_marginStart="@dimen/nav_content_margin_StartEnd"
         android:layout_marginEnd="@dimen/nav_content_margin_StartEnd"
-        android:src="@drawable/user_grey_24"
-        app:civ_border_color="@android:color/white"
-        app:civ_border_width="@dimen/nav_image_circular_border_width" />
+        app:cardCornerRadius="@dimen/image_card_corner"
+        >
+        <ImageView
+            android:id="@+id/iv_user_image"
+            android:layout_width="@dimen/nav_image_size"
+            android:layout_height="@dimen/nav_image_size"
+            android:src="@drawable/user_grey_24"
+            app:civ_border_color="@android:color/white"
+            app:civ_border_width="@dimen/nav_image_circular_border_width" />
+
+    </androidx.cardview.widget.CardView>
+
+
 
     <TextView
-        android:id="@+id/tv_username"
+        android:id="@+id/tv_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/nav_content_margin_StartEnd"
         android:layout_marginTop="@dimen/nav_content_margin_top"
-        android:layout_marginEnd="@dimen/nav_content_margin_StartEnd"
         android:layout_marginBottom="@dimen/nav_content_margin_bottom"
-        android:text="@string/app_name"
         android:textColor="@android:color/white"
+        android:text="ProManage"
         android:textSize="@dimen/nav_user_name_text_size" />
 
     <View

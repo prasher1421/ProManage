@@ -173,8 +173,8 @@
                         android:backgroundTint="@color/theme_grey"
                         app:cardCornerRadius="20dp">
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:src="@drawable/twitter_logo"
                             android:layout_gravity="center"/>
                     </androidx.cardview.widget.CardView>

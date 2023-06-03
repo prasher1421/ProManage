@@ -147,4 +147,6 @@
     <dimen name="dialog_list_marginTopBottom">3dp</dimen>
 
     <dimen name="item_selected_member_image_size">45dp</dimen>
+    <dimen name="image_card_corner">40dp</dimen>
+    <dimen name="profile_text_size">40sp</dimen>
 </resources>

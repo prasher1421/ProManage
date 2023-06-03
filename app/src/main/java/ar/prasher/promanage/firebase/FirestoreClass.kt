@@ -2,8 +2,9 @@ package ar.prasher.promanage.firebase
 
 import android.app.Activity
 import android.util.Log
-import ar.prasher.promanage.activities.IntroActivity
-import ar.prasher.promanage.activities.SignUpActivity
+import android.widget.Toast
+import ar.prasher.promanage.activities.*
+import ar.prasher.promanage.models.Board
 import ar.prasher.promanage.models.User
 import ar.prasher.promanage.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -36,8 +37,44 @@ class FirestoreClass {
             }
     }
 
+    fun createBoard(activity: CreateBoardActivity, board: Board){
+        mFireStore.collection(Constants.BOARDS)
+            .document()
+            .set(board, SetOptions.merge())
+            .addOnSuccessListener {
+                Log.i("Board Created Successfully",activity.javaClass.simpleName)
 
-    fun signInUser(activity: IntroActivity){
+                activity.boardCreatedSuccessfully()
+            }
+            .addOnFailureListener { e->
+                Log.e("Board Creation Error",e.toString())
+            }
+    }
+
+    fun updateUserProfileData(activity: Activity,
+                              userHashMap: HashMap<String,Any>){
+
+        mFireStore.collection(Constants.USERS)
+            .document(getCurrentUserID()) //document for every single user
+            .update(userHashMap)
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName, "Profile Data Update")
+                Toast.makeText(activity,"Profile Update",Toast.LENGTH_LONG).show()
+
+                when(activity){
+                    is MyProfileActivity -> activity.imageUpdateSuccess()
+                    is EditProfileActivity -> activity.profileUpdateSuccess()
+                }
+            }.addOnFailureListener {
+                when(activity){
+                    is MyProfileActivity ->  activity.hideProgressDialog()
+                    is EditProfileActivity -> activity.hideProgressDialog()
+                }
+                Log.e("Error while uploading",it.toString())
+            }
+    }
+
+    fun loadUserData(activity: Activity){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserID()) //document for every single user
             .get()//only difference in sign in and signup
@@ -46,7 +83,18 @@ class FirestoreClass {
                 val loggedInUser = document.toObject(User::class.java)
 
                 if (loggedInUser != null) {
-                    activity.signInSuccess()
+
+                    when(activity){
+                        is MainActivity ->
+                            activity.updateNavigationUserDetails(loggedInUser)
+                        is IntroActivity ->
+                            activity.signInSuccess()
+                        is MyProfileActivity ->
+                            activity.updateUserProfileDetails(loggedInUser)
+                        is EditProfileActivity ->
+                            activity.updateUserProfileDetails(loggedInUser)
+
+                    }
                 }
             }
             .addOnFailureListener {
