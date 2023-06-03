@@ -1,8 +1,6 @@
 package ar.prasher.promanage.activities
 
-import android.app.Dialog
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -128,7 +126,7 @@ class IntroActivity : BaseActivity() {
                     val user = User(firebaseUser.uid,registeredName, registeredEmail,account.photoUrl.toString())
                     FirestoreClass().registerUser(this,user)
 
-                    FirestoreClass().signInUser(this)
+                    FirestoreClass().loadUserData(this)
                 }
                 else{//if wasn't successful
                     Toast.makeText(
@@ -154,7 +152,7 @@ class IntroActivity : BaseActivity() {
                     if(task.isSuccessful){
                         //Sign in Success, update your ui with the same user
                         Log.d("Sign in with Email","Successful")
-                        FirestoreClass().signInUser(this)
+                        FirestoreClass().loadUserData(this)
                     }
                     else{
                     //Sign in failed display some msg to user
@@ -212,7 +210,7 @@ class IntroActivity : BaseActivity() {
             //there is something already here Finish the sign in
             pendingResultTask
                 .addOnSuccessListener {
-                    FirestoreClass().signInUser(this)
+                    FirestoreClass().loadUserData(this)
                 }
                 .addOnFailureListener {
 
@@ -242,7 +240,7 @@ class IntroActivity : BaseActivity() {
                             val user = User(firebaseUser.uid,registeredName, "",profileImage.toString())
                             FirestoreClass().registerUser(this,user)
 
-                            FirestoreClass().signInUser(this)
+                            FirestoreClass().loadUserData(this)
 
                         }else {
                             Toast.makeText(
@@ -251,10 +249,7 @@ class IntroActivity : BaseActivity() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-
-
                     }
-
             }
             .addOnFailureListener {e ->
                 Log.e("Error Twitter Sign In",e.toString())

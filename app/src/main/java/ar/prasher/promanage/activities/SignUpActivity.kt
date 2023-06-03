@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.TextView
@@ -24,6 +25,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.OAuthProvider
 
 class SignUpActivity : BaseActivity() {
 
@@ -34,9 +36,11 @@ class SignUpActivity : BaseActivity() {
     private var etEmail : EditText? = null
     private var toolbarSignUp : Toolbar? = null
     private var googleSignInButton : CardView? = null
+    private var twitterSignInButton : CardView? = null
 
-    private var firebaseAuth : FirebaseAuth? = null
+    private lateinit var auth : FirebaseAuth
     private lateinit var mGoogleSignInClient : GoogleSignInClient
+    private val provider = OAuthProvider.newBuilder("twitter.com")
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,8 +59,9 @@ class SignUpActivity : BaseActivity() {
         etPassword = findViewById(R.id.et_password)
         tvProgressText = findViewById(R.id.tv_progress_text)
         googleSignInButton = findViewById(R.id.google_sign_in)
+        twitterSignInButton = findViewById(R.id.twitter_sign_in)
 
-        firebaseAuth = FirebaseAuth.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         setupActionBar()
 
@@ -77,6 +82,10 @@ class SignUpActivity : BaseActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this,googleSignInOptions)
         googleSignInButton?.setOnClickListener{
             signInGoogle()
+        }
+
+        twitterSignInButton?.setOnClickListener {
+            signInTwitter()
         }
 
 
@@ -114,7 +123,7 @@ class SignUpActivity : BaseActivity() {
         val credential = GoogleAuthProvider
             .getCredential(account.idToken,null)
 
-        firebaseAuth?.signInWithCredential(credential)!!
+        auth.signInWithCredential(credential)
             .addOnCompleteListener { task->
 
                 if (task.isSuccessful){
@@ -226,4 +235,58 @@ class SignUpActivity : BaseActivity() {
         val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent,Constants.GOOGLE_SIGN_IN_REQ_CODE)
     }
+
+
+    private fun signInTwitter() {
+        val pendingResultTask = auth.pendingAuthResult
+        if (pendingResultTask != null){
+            showProgressDialog("Please Wait")
+            //there is something already here Finish the sign in
+            pendingResultTask
+                .addOnSuccessListener {
+                    //FirestoreClass().signInUser(this)
+                    //Already signed in
+                }
+                .addOnFailureListener {
+
+                }
+        } else{
+            startTwitterSignIn()
+        }
+    }
+
+    private fun startTwitterSignIn() {
+        auth.startActivityForSignInWithProvider(this,provider.build())
+            .addOnSuccessListener {authResult ->
+
+                showProgressDialog("Please Wait")
+
+                val credential = authResult.credential
+                auth.signInWithCredential(credential!!)
+                    .addOnCompleteListener {task ->
+                        hideProgressDialog()
+
+                        if (task.isSuccessful){
+
+                            val firebaseUser : FirebaseUser = task.result!!.user!!
+                            val profileImage = authResult.user?.photoUrl!!
+                            val registeredName = authResult.user?.displayName!!
+
+                            val user = User(firebaseUser.uid,registeredName, "",profileImage.toString())
+                            FirestoreClass().registerUser(this,user)
+                        }else {
+                            Toast.makeText(
+                                this,
+                                "Sign in Failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+            }
+            .addOnFailureListener {e ->
+                Log.e("Error Twitter Sign In",e.toString())
+            }
+    }
+
+
 }
