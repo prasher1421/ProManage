@@ -30,4 +30,8 @@
     <string name="create">Create</string>
     <string name="my_profile">My Profile</string>
     <string name="create_board">Create Board</string>
+    <string name="action_add_list">Add List</string>
+    <string name="hint_list_name">List Name</string>
+    <string name="action_add_card">Add Card</string>
+    <string name="hint_card_name">Card Name</string>
 </resources>
