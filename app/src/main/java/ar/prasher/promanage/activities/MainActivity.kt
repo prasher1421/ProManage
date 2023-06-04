@@ -4,13 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ar.prasher.promanage.R
+import ar.prasher.promanage.adapters.BoardItemsAdapter
 import ar.prasher.promanage.firebase.FirestoreClass
+import ar.prasher.promanage.models.Board
 import ar.prasher.promanage.models.User
 import ar.prasher.promanage.utils.Constants
 import com.bumptech.glide.Glide
@@ -28,7 +33,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private var navView : NavigationView? = null
     private var ivUserImage : ImageView? = null
     private  var tvUserName : TextView? = null
+    private  var tvNoBoardsAvailable : TextView? = null
     private  var fabCreateBoard : FloatingActionButton? = null
+    private  var rvBoardsList : RecyclerView? = null
 
     private lateinit var mUserName : String
 
@@ -61,14 +68,43 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         // pass the same server client ID used while implementing the LogIn feature earlier.
 
         navView?.setNavigationItemSelectedListener(this)
-        toolbar?.setNavigationOnClickListener { toggleDrawer() }
 
-        FirestoreClass().loadUserData(this)
+        FirestoreClass().loadUserData(this,true)
 
         fabCreateBoard?.setOnClickListener {
             val intent = Intent(this,CreateBoardActivity::class.java)
             intent.putExtra(Constants.NAME,mUserName)
-            startActivity(intent)
+            startActivityForResult(intent,Constants.CREATE_BOARD_REQUEST_CODE)
+        }
+
+    }
+
+    fun populateListToUI(boardsList : ArrayList<Board>){
+        hideProgressDialog()
+        rvBoardsList = findViewById(R.id.rv_boards_list)
+        tvNoBoardsAvailable = findViewById(R.id.tv_no_boards_available)
+
+        if (boardsList.size > 0){
+            rvBoardsList?.visibility = View.VISIBLE
+            tvNoBoardsAvailable?.visibility = View.GONE
+
+            rvBoardsList?.layoutManager = LinearLayoutManager(this)
+            rvBoardsList?.setHasFixedSize(true)
+
+            val adapter = BoardItemsAdapter(this,boardsList)
+            rvBoardsList?.adapter = adapter
+
+            adapter.setOnClickListener(object : BoardItemsAdapter.OnClickListener{
+                override fun onClick(position: Int, model: Board) {
+                    val intent = Intent(this@MainActivity,TaskListActivity::class.java)
+                    intent.putExtra(Constants.DOCUMENT_ID,model.documentID)
+                    startActivity(intent)
+                }
+            })
+
+        }else{
+            rvBoardsList?.visibility = View.GONE
+            tvNoBoardsAvailable?.visibility = View.VISIBLE
         }
 
     }
@@ -77,6 +113,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setSupportActionBar(toolbar)
         toolbar?.setNavigationOnClickListener {
             //Toggle Drawer
+            toggleDrawer()
         }
     }
 
@@ -102,8 +139,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == PROFILE_UPDATE_REQUEST_CODE){
             FirestoreClass().loadUserData(this)
-        }else{
-            Log.i("NO UPDATE MADE","Cancelled")
+        }
+
+        if (resultCode == RESULT_OK  && requestCode == Constants.CREATE_BOARD_REQUEST_CODE){
+            FirestoreClass().getBoardsList(this)
         }
     }
 
@@ -129,7 +168,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-    fun updateNavigationUserDetails(user: User) {
+    fun updateNavigationUserDetails(user: User,readBoardsList : Boolean) {
 
         mUserName = user.name
 
@@ -145,6 +184,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         tvUserName = findViewById(R.id.tv_user_name)
         tvUserName?.text = user.name
         Log.i("Username set",user.name)
+
+        if (readBoardsList){
+            showProgressDialog("Please Wait")
+            FirestoreClass().getBoardsList(this)
+        }
+
     }
 
     //another approach but not clean

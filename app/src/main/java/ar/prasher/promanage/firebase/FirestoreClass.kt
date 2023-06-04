@@ -19,21 +19,46 @@ class FirestoreClass {
     fun registerUser(activity: Activity, userInfo : User){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserID()) //document for every single user
-            .set(userInfo, SetOptions.merge())//merges user info that is passed to us
-            .addOnSuccessListener {
-                when (activity){
-                    is SignUpActivity -> activity.userRegisteredSuccess()
-                    is IntroActivity -> activity.signInSuccess()
-                }
+            .get()
+            .addOnCompleteListener {task->
 
-            }
-            .addOnFailureListener {
-                when(activity){
-                    is SignUpActivity ->
-                        activity.hideProgressDialog()
-                    is IntroActivity ->
-                        activity.hideProgressDialog()
+                if (task.isSuccessful){
+                    val document = task.result
+
+                    //if user is registered already and tries to register again
+
+                    if (document.exists()){
+                        val loggedInUser = document.toObject(User::class.java)
+
+                        if (loggedInUser != null) {
+
+                            when(activity){
+                                is IntroActivity -> activity.signInSuccess()
+                                is SignUpActivity -> activity.userRegisteredSuccess()
+                            }
+                        }
+                    }else{
+                        document.reference
+                        .set(userInfo, SetOptions.merge())//merges user info that is passed to us
+                            .addOnSuccessListener {
+                                when (activity){
+                                    is SignUpActivity -> activity.userRegisteredSuccess()
+                                    is IntroActivity -> activity.signInSuccess()
+                                }
+
+                            }
+                            .addOnFailureListener {
+                                when(activity){
+                                    is SignUpActivity ->
+                                        activity.hideProgressDialog()
+                                    is IntroActivity ->
+                                        activity.hideProgressDialog()
+                                }
+                            }
+                    }
                 }
+            }.addOnFailureListener {
+                Log.e("Error Creating Document",it.toString())
             }
     }
 
@@ -74,7 +99,50 @@ class FirestoreClass {
             }
     }
 
-    fun loadUserData(activity: Activity){
+    fun getBoardDetails(activity: TaskListActivity, boardDocumentId: String?) {
+        mFireStore.collection(Constants.BOARDS)
+            .document(boardDocumentId!!)
+            .get()
+            .addOnSuccessListener { document ->
+
+                val boardData = document.toObject(Board::class.java)
+
+                if (boardData != null){
+                    activity.boardDetails(boardData)
+                }
+
+            }
+            .addOnFailureListener {
+                Log.e(activity.javaClass.simpleName,"Error loading board document")
+            }
+    }
+
+    fun getBoardsList(activity: MainActivity){
+        mFireStore.collection(Constants.BOARDS)
+            .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserID())//where assigned to current user
+            .get()//only difference in sign in and signup
+            .addOnSuccessListener { document ->
+                //now from the document we can have user's data
+                val boardsList : ArrayList<Board> = ArrayList()
+
+                //this document is a snapshot which contains all documents containing assigned ones
+                for (i in document.documents){
+
+                    val board = i.toObject(Board::class.java)
+                    //whatever object you have convert it tp Board object
+                    board?.documentID = i.id
+                    boardsList.add(board!!)
+                }
+
+                activity.populateListToUI(boardsList)
+
+            }
+            .addOnFailureListener {
+                Log.e(activity.javaClass.simpleName,"Error loading boards")
+            }
+    }
+
+    fun loadUserData(activity: Activity, readBoardsList : Boolean = false){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserID()) //document for every single user
             .get()//only difference in sign in and signup
@@ -86,7 +154,7 @@ class FirestoreClass {
 
                     when(activity){
                         is MainActivity ->
-                            activity.updateNavigationUserDetails(loggedInUser)
+                            activity.updateNavigationUserDetails(loggedInUser, readBoardsList)
                         is IntroActivity ->
                             activity.signInSuccess()
                         is MyProfileActivity ->
@@ -98,7 +166,7 @@ class FirestoreClass {
                 }
             }
             .addOnFailureListener {
-                Log.e(activity.javaClass.simpleName,"Error writing document")
+                Log.e(activity.javaClass.simpleName,"Error loading document")
             }
     }
 
