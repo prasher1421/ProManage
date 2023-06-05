@@ -34,4 +34,10 @@
     <string name="hint_list_name">List Name</string>
     <string name="action_add_card">Add Card</string>
     <string name="hint_card_name">Card Name</string>
+    <string name="members">Members</string>
+    <string name="add_member">Add Member</string>
+    <string name="search_member">Search Member</string>
+    <string name="email">Email</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -12,15 +12,23 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:background="@drawable/bg_color_round_corner"
         android:padding="@dimen/item_member_content_padding">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_member_image"
+
+        <androidx.cardview.widget.CardView
             android:layout_width="@dimen/item_member_member_image_size"
             android:layout_height="@dimen/item_member_member_image_size"
-            android:src="@drawable/user_grey_24"
-            app:civ_border_color="@color/white"
-            app:civ_border_width="@dimen/item_member_image_circular_width_size" />
+            app:cardCornerRadius="@dimen/image_card_corner"
+            >
+            <ImageView
+                android:id="@+id/iv_member_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/user_grey_24" />
+
+        </androidx.cardview.widget.CardView>
+
 
         <LinearLayout
             android:layout_width="0dp"
@@ -33,7 +41,7 @@
                 android:id="@+id/tv_member_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="@dimen/item_member_name_text_size"
                 tools:text="Member Name" />
 
