@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/black"
     android:elevation="@dimen/task_item_cv_elevation"
+    android:backgroundTint="@color/background_color"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
         android:orientation="vertical">
 
         <TextView
@@ -19,8 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
+            android:layout_margin="5dp"
             android:elevation="@dimen/task_item_add_card_text_elevation"
-            android:layout_marginHorizontal="@dimen/margin_horizontal_task"
             android:background="@drawable/bg_button"
             android:gravity="center"
             android:padding="@dimen/task_item_add_item_text_padding"
@@ -34,19 +33,17 @@
             android:id="@+id/cv_add_task_list_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/task_item_cv_margin"
+            android:layout_margin="@dimen/task_item_cv_margin"
             android:elevation="@dimen/task_item_cv_elevation"
             android:visibility="gone"
             android:backgroundTint="@color/theme_grey"
             app:cardCornerRadius="@dimen/task_item_cv_corner_radius"
-            android:layout_marginHorizontal="@dimen/margin_horizontal_task"
             tools:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_marginHorizontal="@dimen/margin_horizontal_task"
                 android:orientation="horizontal">
 
                 <ImageButton
@@ -64,7 +61,7 @@
                     android:layout_weight="1"
                     android:textSize="@dimen/et_text_size"
                     android:autofillHints="@string/hint_list_name"
-                    android:textColor="@color/text_grey"
+                    android:textColor="@color/white"
                     android:textColorHint="@color/text_grey"
                     android:hint="@string/hint_list_name"
                     android:imeOptions="actionDone"
@@ -84,7 +81,7 @@
             android:id="@+id/ll_task_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
+            android:background="@color/background_color"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:visibility="gone"
@@ -94,12 +91,12 @@
                 android:id="@+id/ll_title_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/theme_grey"
+                android:background="@drawable/bg_list_title"
                 android:elevation="@dimen/task_item_title_view_elevation"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:visibility="visible"
-                android:layout_marginHorizontal="@dimen/margin_horizontal_task"
+                android:layout_margin="5dp"
                 tools:visibility="visible">
 
                 <TextView
@@ -138,10 +135,9 @@
                 android:id="@+id/cv_edit_task_list_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/task_item_cv_margin"
+                android:layout_margin="@dimen/task_item_cv_margin"
                 android:elevation="@dimen/task_item_cv_elevation"
                 android:visibility="gone"
-                android:layout_marginHorizontal="@dimen/margin_horizontal_task"
                 android:backgroundTint="@color/theme_grey"
                 app:cardCornerRadius="@dimen/task_item_cv_corner_radius"
                 tools:visibility="visible">
@@ -167,7 +163,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textSize="@dimen/et_text_size"
-                        android:textColor="@color/text_grey"
+                        android:textColor="@color/white"
                         android:textColorHint="@color/text_grey"
                         android:autofillHints="@string/hint_list_name"
                         android:hint="@string/hint_list_name"
@@ -194,11 +190,10 @@
                 android:id="@+id/cv_add_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/task_item_cv_margin"
+                android:layout_margin="@dimen/task_item_cv_margin"
                 android:elevation="@dimen/task_item_cv_elevation"
                 android:backgroundTint="@color/theme_grey"
                 android:visibility="gone"
-                android:layout_marginHorizontal="@dimen/margin_horizontal_task"
                 app:cardCornerRadius="@dimen/task_item_cv_corner_radius"
                 tools:visibility="visible">
 
@@ -221,7 +216,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textColor="@color/text_grey"
+                        android:textColor="@color/white"
                         android:textColorHint="@color/text_grey"
                         android:textSize="@dimen/et_text_size"
                         android:autofillHints="@string/hint_card_name"
@@ -244,10 +239,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:elevation="@dimen/task_item_add_card_text_elevation"
-                android:layout_marginHorizontal="20dp"
                 android:background="@drawable/bg_button"
                 android:gravity="center"
                 android:padding="@dimen/task_item_add_item_text_padding"
+                android:layout_margin="5dp"
                 android:text="@string/action_add_card"
                 android:textColor="@color/white"
                 android:layout_marginBottom="10dp"

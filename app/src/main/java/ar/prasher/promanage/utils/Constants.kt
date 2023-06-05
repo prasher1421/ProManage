@@ -18,6 +18,9 @@ object Constants {
     const val EMAIL : String = "email"
     const val MOBILE : String = "mobile"
     const val ASSIGNED_TO : String = "assignedTo"
+    const val TASK_LIST : String = "taskList"
+    const val BOARD_DETAIL : String = "boardDetail"
+    const val ID : String = "id"
     const val READ_STORAGE_PERMISSION_CODE = 11
     const val PICK_IMAGE_REQUEST_CODE = 22
     const val PROFILE_UPDATE_REQUEST_CODE = 21

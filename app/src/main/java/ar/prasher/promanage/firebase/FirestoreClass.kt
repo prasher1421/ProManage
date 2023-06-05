@@ -76,6 +76,43 @@ class FirestoreClass {
             }
     }
 
+    fun addUpdateTaskList(activity: TaskListActivity, board: Board){
+        val taskListHashMap = HashMap<String,Any>()
+        taskListHashMap[Constants.TASK_LIST] = board.taskList
+
+        mFireStore.collection(Constants.BOARDS)
+            .document(board.documentID)
+            .update(taskListHashMap)
+            .addOnSuccessListener {
+                Log.i("Task List Successfully",activity.javaClass.simpleName)
+
+                activity.addUpdateTaskListSuccess()
+            }
+            .addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.i("Task List Updating Error",it.toString())
+            }
+    }
+
+    //also assign the added member to firestore database (UPDATING)
+    fun assignMemberToBoard(activity: MembersActivity, board : Board, user : User){
+
+        val assignedToHashMap = HashMap<String,Any>()
+
+        assignedToHashMap[Constants.ASSIGNED_TO] = board.assignedTo
+        mFireStore.collection(Constants.BOARDS)
+            .document(board.documentID)
+            .update(assignedToHashMap)
+            .addOnSuccessListener {
+                activity.memberAssignSuccess(user)
+            }
+            .addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName,"Error updating assigned Member Board Details")
+            }
+
+    }
+
     fun updateUserProfileData(activity: Activity,
                               userHashMap: HashMap<String,Any>){
 
@@ -108,6 +145,7 @@ class FirestoreClass {
                 val boardData = document.toObject(Board::class.java)
 
                 if (boardData != null){
+                    boardData.documentID = document.id
                     activity.boardDetails(boardData)
                 }
 
@@ -170,6 +208,51 @@ class FirestoreClass {
             }
     }
 
+    fun getAssignedMembersListDetails(
+        activity: MembersActivity ,
+        assignedTo : ArrayList<String>
+    ) {
+        mFireStore.collection(Constants.USERS)
+            .whereIn(Constants.ID,assignedTo)
+            .get()
+            .addOnSuccessListener {
+                listDocuments ->
+                Log.i("Assigned Members List",listDocuments.toString())
+
+                val usersList : ArrayList<User> = ArrayList()
+
+                for(i in listDocuments.documents){
+                    val user = i.toObject(User::class.java)
+                    usersList.add(user!!)
+                }
+
+                activity.setupMembersList(usersList)
+            }
+            .addOnFailureListener {
+                Log.e("Error Assigned Member get()",it.toString())
+            }
+    }
+
+
+    fun getMemberDetails(activity: MembersActivity, email: String){
+        mFireStore.collection(Constants.USERS)
+            .whereEqualTo(Constants.EMAIL,email)
+            .get()
+            .addOnSuccessListener {
+                document ->
+                if (document.documents.size>0){
+                    val user = document.documents[0].toObject(User::class.java)!!
+                    activity.memberDetails(user)
+                }else{
+                    activity.hideProgressDialog()
+                    activity.showErrorSnackBar("No Such Member Found")
+                }
+            }.addOnFailureListener {
+                activity.hideProgressDialog()
+                Log.e("Error while Member get()",it.toString())
+            }
+    }
+
     fun getCurrentUserID() : String{
 
         var currentUser = FirebaseAuth.getInstance().currentUser
@@ -179,5 +262,4 @@ class FirestoreClass {
         }
         return currentUserID
     }
-
 }
