@@ -10,7 +10,7 @@ data class Board(
     val createdBy : String = "",
     val assignedTo :ArrayList<String> = ArrayList(),
     var documentID : String = "",
-    val taskList :ArrayList<Task> = ArrayList()
+    var taskList :ArrayList<Task> = ArrayList()
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,

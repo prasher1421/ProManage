@@ -9,6 +9,7 @@
     android:padding="5dp">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv_selected_member_image"
         android:layout_width="@dimen/item_selected_member_image_size"
         android:layout_height="@dimen/item_selected_member_image_size"
         app:cardCornerRadius="90dp"
@@ -24,6 +25,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv_add_member"
         android:layout_width="@dimen/item_selected_member_image_size"
         android:layout_height="@dimen/item_selected_member_image_size"
         app:cardCornerRadius="90dp"

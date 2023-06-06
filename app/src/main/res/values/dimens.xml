@@ -21,7 +21,7 @@
     <dimen name="intro_screen_sign_in_btn_marginTop">50dp</dimen>
     <dimen name="btn_paddingTopBottom">8dp</dimen>
     <dimen name="intro_screen_sign_up_btn_marginTop">15dp</dimen>
-    <dimen name="btn_text_size">18sp</dimen>
+    <dimen name="btn_text_size">14sp</dimen>
 
     <dimen name="sign_up_screen_btn_marginTop">30dp</dimen>
     <dimen name="toolbar_title_text_size">18sp</dimen>

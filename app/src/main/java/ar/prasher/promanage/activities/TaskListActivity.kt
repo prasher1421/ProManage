@@ -15,6 +15,7 @@ import ar.prasher.promanage.firebase.FirestoreClass
 import ar.prasher.promanage.models.Board
 import ar.prasher.promanage.models.Card
 import ar.prasher.promanage.models.Task
+import ar.prasher.promanage.models.User
 import ar.prasher.promanage.utils.Constants
 
 class TaskListActivity : BaseActivity() {
@@ -25,6 +26,7 @@ class TaskListActivity : BaseActivity() {
     private var mBoardDocumentId : String? = null
 
     private lateinit var mBoardDetails : Board
+    private lateinit var mAssignedMemberDetailsList : ArrayList<User>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +51,8 @@ class TaskListActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == MEMBER_REQUEST_CODE){
+        if (resultCode == Activity.RESULT_OK && requestCode == MEMBER_REQUEST_CODE
+            || requestCode == CARD_DETAIL_REQUEST_CODE){
             showProgressDialog("Please Wait")
             FirestoreClass().getBoardDetails(this,mBoardDocumentId)
         }else{
@@ -98,6 +101,13 @@ class TaskListActivity : BaseActivity() {
 
         val adapter = TaskListItemsAdapter(this,board.taskList)
         rvTaskList?.adapter = adapter
+
+        showProgressDialog("Please Wait")
+        FirestoreClass().getAssignedMembersListDetails(
+            this,
+            mBoardDetails.assignedTo
+        )
+
     }
 
     fun addUpdateTaskListSuccess(){
@@ -159,8 +169,25 @@ class TaskListActivity : BaseActivity() {
         FirestoreClass().addUpdateTaskList(this,mBoardDetails)
     }
 
+    fun cardDetails(taskListPosition : Int, cardPosition : Int){
+        val intent = Intent(this,CardDetailsActivity::class.java)
+        intent.putExtra(Constants.BOARD_DETAIL,mBoardDetails)
+        intent.putExtra(Constants.TASK_LIST_ITEM_POSITION,taskListPosition)
+        intent.putExtra(Constants.CARD_LIST_ITEM_POSITION,cardPosition)
+        intent.putExtra(Constants.BOARD_MEMBERS_LIST,mAssignedMemberDetailsList)
+        startActivityForResult(intent, CARD_DETAIL_REQUEST_CODE)
+        Log.wtf("Card Details Opened","Yes")
+    }
+
+    fun boardAssignedMemberDetailsList(list : ArrayList<User>){
+        mAssignedMemberDetailsList = list
+
+        hideProgressDialog()
+    }
+
     companion object {
         const val MEMBER_REQUEST_CODE = 32
+        const val CARD_DETAIL_REQUEST_CODE = 33
     }
 
 }

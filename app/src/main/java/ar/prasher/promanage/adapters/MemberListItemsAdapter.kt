@@ -8,8 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ar.prasher.promanage.R
-import ar.prasher.promanage.models.Board
 import ar.prasher.promanage.models.User
+import ar.prasher.promanage.utils.Constants
 import com.bumptech.glide.Glide
 
 open class MemberListItemsAdapter(
@@ -28,22 +28,32 @@ open class MemberListItemsAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val model = list[position]
+        val user = list[position]
 
         Glide
             .with(context)
-            .load(model.image)
+            .load(user.image)
             .centerCrop()
             .placeholder(R.drawable.user_grey_24)
             .into(holder.ivImage!!)
 
-        holder.tvName?.text = model.name
-        holder.tvEmail?.text = model.email
+        holder.tvName?.text = user.name
+        holder.tvEmail?.text = user.email
+
+        if (user.selected){
+            holder.ivSelectedMember?.visibility = View.VISIBLE
+        }else{
+            holder.ivSelectedMember?.visibility = View.GONE
+        }
 
         //single item click listener
         holder.itemView.setOnClickListener {
             if (onClickListener!=null){
-                onClickListener!!.onClick(position, model)
+                if (user.selected){
+                    onClickListener!!.onClick(position, user,Constants.UN_SELECT)
+                }else{
+                    onClickListener!!.onClick(position, user,Constants.SELECT)
+                }
             }
         }
     }
@@ -55,7 +65,7 @@ open class MemberListItemsAdapter(
     private var onClickListener : OnClickListener? = null
 
     interface OnClickListener{
-        fun onClick(position : Int, model : User)
+        fun onClick(position : Int, user : User, action : String)
     }
 
     fun setOnClickListener(onClickListener: OnClickListener) {
@@ -64,6 +74,7 @@ open class MemberListItemsAdapter(
 
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val ivImage : ImageView? = view.findViewById(R.id.iv_member_image)
+        val ivSelectedMember : ImageView? = view.findViewById(R.id.iv_selected_member)
         val tvName : TextView? = view.findViewById(R.id.tv_member_name)
         val tvEmail : TextView? = view.findViewById(R.id.tv_member_email)
     }
