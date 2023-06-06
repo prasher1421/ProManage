@@ -40,4 +40,12 @@
     <string name="email">Email</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="update">Update</string>
+    <string name="select_due_date">Select Due Date</string>
+    <string name="due_date">Due Date</string>
+    <string name="select_members">Select Members</string>
+    <string name="select_color">Select Color</string>
+    <string name="label_color">Label Color</string>
+    <string name="delete_card">Delete Card</string>
+    <string name="select_label_color">Select Label Color</string>
 </resources>

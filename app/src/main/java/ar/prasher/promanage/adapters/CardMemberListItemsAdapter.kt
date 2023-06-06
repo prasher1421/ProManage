@@ -1,28 +1,26 @@
 package ar.prasher.promanage.adapters
 
 import android.content.Context
-import android.graphics.Color
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import ar.prasher.promanage.R
-import ar.prasher.promanage.models.Board
-import ar.prasher.promanage.models.Card
+import ar.prasher.promanage.models.SelectedMembers
 import com.bumptech.glide.Glide
 
-open class CardListItemsAdapter(
+open class CardMemberListItemsAdapter(
     private val context: Context,
-    private val list: ArrayList<Card>
-) : RecyclerView.Adapter<CardListItemsAdapter.MyViewHolder>() {
+    private val list: ArrayList<SelectedMembers>
+) : RecyclerView.Adapter<CardMemberListItemsAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
             LayoutInflater.from(context).inflate(
-                R.layout.item_card,
+                R.layout.item_card_selected_member,
                 parent,
                 false
             )
@@ -32,17 +30,26 @@ open class CardListItemsAdapter(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val model = list[position]
 
-        holder.tvCardName?.text = model.name
+        if (position ==  list.size-1){
+            holder.cvAddMember?.visibility = View.VISIBLE
+            holder.cvSelectedMemberImage?.visibility = View.GONE
+        }else{
+            holder.cvAddMember?.visibility = View.GONE
+            holder.cvSelectedMemberImage?.visibility = View.VISIBLE
 
-        if (model.labelColor.isNotEmpty()){
-            holder.viewLabelColor?.visibility = View.VISIBLE
-            holder.viewLabelColor?.setBackgroundColor(Color.parseColor(model.labelColor))
+            Glide
+                .with(context)
+                .load(model.image)
+                .centerCrop()
+                .placeholder(R.drawable.user_grey_24)
+                .into(holder.ivSelectedMemberImage!!)
+
         }
 
         //single item click listener
         holder.itemView.setOnClickListener {
             if (onClickListener!=null){
-                onClickListener!!.onClick(position, model)
+                onClickListener!!.onClick(position,model)
             }
         }
     }
@@ -52,15 +59,18 @@ open class CardListItemsAdapter(
     }
 
     private var onClickListener : OnClickListener? = null
+
     interface OnClickListener{
-        fun onClick(cardPosition : Int, model : Card)
+        fun onClick(position : Int, model : SelectedMembers)
     }
+
     fun setOnClickListener(onClickListener: OnClickListener) {
         this.onClickListener = onClickListener
     }
 
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvCardName : TextView? = view.findViewById(R.id.tv_card_name)
-        val viewLabelColor : View? = view.findViewById(R.id.view_label_color)
+        val ivSelectedMemberImage : ImageView? = view.findViewById(R.id.iv_selected_member_image)
+        val cvAddMember : CardView? = view.findViewById(R.id.cv_add_member)
+        val cvSelectedMemberImage : CardView? = view.findViewById(R.id.cv_selected_member_image)
     }
 }

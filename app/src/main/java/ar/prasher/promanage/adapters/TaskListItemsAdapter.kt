@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ar.prasher.promanage.R
 import ar.prasher.promanage.activities.TaskListActivity
+import ar.prasher.promanage.models.Card
 import ar.prasher.promanage.models.Task
 
 open class TaskListItemsAdapter(
@@ -140,6 +141,16 @@ open class TaskListItemsAdapter(
         holder.rvCardList?.setHasFixedSize(true)
         val adapter = CardListItemsAdapter(context,model.cards)
         holder.rvCardList?.adapter = adapter
+
+        adapter.setOnClickListener(
+            object : CardListItemsAdapter.OnClickListener{
+                override fun onClick(cardPosition: Int, model: Card) {
+                    if (context is TaskListActivity){
+                        context.cardDetails(position, cardPosition)
+                    }
+                }
+            }
+        )
 
     }
 

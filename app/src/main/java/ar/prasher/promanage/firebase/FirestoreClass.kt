@@ -76,7 +76,7 @@ class FirestoreClass {
             }
     }
 
-    fun addUpdateTaskList(activity: TaskListActivity, board: Board){
+    fun addUpdateTaskList(activity: Activity, board: Board){
         val taskListHashMap = HashMap<String,Any>()
         taskListHashMap[Constants.TASK_LIST] = board.taskList
 
@@ -86,10 +86,16 @@ class FirestoreClass {
             .addOnSuccessListener {
                 Log.i("Task List Successfully",activity.javaClass.simpleName)
 
-                activity.addUpdateTaskListSuccess()
+                when(activity){
+                    is TaskListActivity -> activity.addUpdateTaskListSuccess()
+                    is CardDetailsActivity -> activity.addUpdateTaskListSuccess()
+                }
             }
             .addOnFailureListener {
-                activity.hideProgressDialog()
+                when(activity){
+                    is TaskListActivity -> activity.hideProgressDialog()
+                    is CardDetailsActivity -> activity.hideProgressDialog()
+                }
                 Log.i("Task List Updating Error",it.toString())
             }
     }
@@ -209,7 +215,7 @@ class FirestoreClass {
     }
 
     fun getAssignedMembersListDetails(
-        activity: MembersActivity ,
+        activity: Activity ,
         assignedTo : ArrayList<String>
     ) {
         mFireStore.collection(Constants.USERS)
@@ -226,10 +232,18 @@ class FirestoreClass {
                     usersList.add(user!!)
                 }
 
-                activity.setupMembersList(usersList)
+                when(activity){
+                    is MembersActivity -> activity.setupMembersList(usersList)
+                    is TaskListActivity -> activity.boardAssignedMemberDetailsList(usersList)
+                }
+
             }
             .addOnFailureListener {
                 Log.e("Error Assigned Member get()",it.toString())
+                when(activity){
+                    is MembersActivity -> activity.hideProgressDialog()
+                    is TaskListActivity -> activity.hideProgressDialog()
+                }
             }
     }
 
