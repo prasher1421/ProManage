@@ -31,7 +31,9 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun hideProgressDialog(){
-        mProgressDialog.dismiss()
+        if (mProgressDialog.isShowing){
+            mProgressDialog.dismiss()
+        }
     }
 
     //current user unique id to display relevant data

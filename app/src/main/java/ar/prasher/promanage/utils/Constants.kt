@@ -27,9 +27,24 @@ object Constants {
     const val SELECT : String = "Select"
     const val UN_SELECT : String = "UnSelect"
 
+    const val PROMANAGE_PREFERENCES = "ProManagePreferences"
+    const val FCM_TOKEN_UPDATED = "fcmTokenUpdated"
+    const val FCM_TOKEN = "fcmToken"
+
+
     const val READ_STORAGE_PERMISSION_CODE = 11
     const val PICK_IMAGE_REQUEST_CODE = 22
     const val PROFILE_UPDATE_REQUEST_CODE = 21
+
+    const val FCM_BASE_URL = "https://fcm.googleapis.com/fcm/send"
+    const val FCM_AUTHORIZATION = "authorization"
+    const val FCM_KEY = "key"
+    const val FCM_SERVER_KEY = "AAAA8OP-Vt8:APA91bGyQd0FahnOABlzrhx5Z5jO6yU-kqxrq_-zlyJRtuhyXfR1wVLlbtaQBvf-OgfvPOhsf2KQcn9t4fwRuDfqnRBsS_H2qD5XXbttRQokqwmK_nC949Z6ZQ1nrsQVpqyR1upkyYao"
+    const val FCM_SENDER_ID = "1034617247455"
+    const val FCM_KEY_MESSAGE = "message"
+    const val FCM_KEY_TITLE = "title"
+    const val FCM_KEY_DATA = "data"
+    const val FCM_KEY_TO = "to"
 
     fun showImageChooser(activity: Activity){
         val galleryIntent = Intent(

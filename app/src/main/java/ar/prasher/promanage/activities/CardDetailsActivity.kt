@@ -2,6 +2,7 @@ package ar.prasher.promanage.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,6 +23,9 @@ import ar.prasher.promanage.dialogs.MemberListDialog
 import ar.prasher.promanage.firebase.FirestoreClass
 import ar.prasher.promanage.models.*
 import ar.prasher.promanage.utils.Constants
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CardDetailsActivity : BaseActivity() {
 
@@ -30,10 +34,12 @@ class CardDetailsActivity : BaseActivity() {
     private var btnUpdateCardDetails :TextView? = null
     private var tvSelectLabelColor :TextView? = null
     private var tvSelectMembers :TextView? = null
+    private var tvSelectDueDate :TextView? = null
     private var rvSelectedMemberList :RecyclerView? = null
 
     private lateinit var mBoardDetails : Board
     private lateinit var mAssignedMemberDetailsList : ArrayList<User>
+    private var mSelectedDueDateMilliseconds : Long = 0
     private var mTaskListPosition = -1
     private var mCardPosition = -1
     private var mSelectedColor = ""
@@ -48,6 +54,7 @@ class CardDetailsActivity : BaseActivity() {
         btnUpdateCardDetails = findViewById(R.id.btn_update_card_details)
         tvSelectLabelColor = findViewById(R.id.tv_select_label_color)
         tvSelectMembers = findViewById(R.id.tv_select_members)
+        tvSelectDueDate = findViewById(R.id.tv_select_due_date)
 
         getIntentData()
         setupActionBar()
@@ -91,6 +98,21 @@ class CardDetailsActivity : BaseActivity() {
         }
 
         setupSelectedMembersList()
+
+        mSelectedDueDateMilliseconds = mBoardDetails
+            .taskList[mTaskListPosition]
+            .cards[mCardPosition]
+            .dueDate
+
+        if (mSelectedDueDateMilliseconds > 0){
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+            val date = sdf.format(Date(mSelectedDueDateMilliseconds))
+            tvSelectDueDate?.text = date
+        }
+
+        tvSelectDueDate?.setOnClickListener {
+            showDatePicker()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -221,7 +243,8 @@ class CardDetailsActivity : BaseActivity() {
             etNameCardDetails?.text.toString(),
             mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].createdBy,
             mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo,
-            mSelectedColor
+            mSelectedColor,
+            mSelectedDueDateMilliseconds
         )
 
         mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition] = card
@@ -329,11 +352,12 @@ class CardDetailsActivity : BaseActivity() {
             )
             val adapter = CardMemberListItemsAdapter(
                 this,
-                selectedMembersList
+                selectedMembersList,
+                true
             )
             rvSelectedMemberList?.adapter = adapter
             adapter.setOnClickListener(object : CardMemberListItemsAdapter.OnClickListener{
-                override fun onClick(position: Int, model: SelectedMembers) {
+                override fun onClick() {
                     membersListDialog()
                 }
             })
@@ -343,4 +367,32 @@ class CardDetailsActivity : BaseActivity() {
             rvSelectedMemberList?.visibility = View.GONE
         }
     }
+
+    private fun showDatePicker(){
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val dpd = DatePickerDialog(
+            this,
+            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                val sDayOfMonth = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
+                val sMonthOfYear =
+                    if ((monthOfYear + 1)<10) "0${monthOfYear+1}" else "${monthOfYear + 1}"
+                val selectedDate = "$sDayOfMonth/$sMonthOfYear/$year"
+                tvSelectDueDate?.text = selectedDate
+
+                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val theDate = sdf.parse(selectedDate)
+                mSelectedDueDateMilliseconds = theDate!!.time
+            },
+            year,
+            month,
+            day
+        )
+        dpd.show()
+
+    }
+
 }
