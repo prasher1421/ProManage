@@ -132,11 +132,13 @@ class FirestoreClass {
                 when(activity){
                     is MyProfileActivity -> activity.imageUpdateSuccess()
                     is EditProfileActivity -> activity.profileUpdateSuccess()
+                    is MainActivity -> activity.tokenUpdateSuccess()
                 }
             }.addOnFailureListener {
                 when(activity){
                     is MyProfileActivity ->  activity.hideProgressDialog()
                     is EditProfileActivity -> activity.hideProgressDialog()
+                    is MainActivity -> activity.hideProgressDialog()
                 }
                 Log.e("Error while uploading",it.toString())
             }

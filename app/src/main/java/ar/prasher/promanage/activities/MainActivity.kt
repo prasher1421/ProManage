@@ -1,6 +1,8 @@
 package ar.prasher.promanage.activities
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -25,6 +27,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceIdReceiver
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -38,6 +43,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private  var rvBoardsList : RecyclerView? = null
 
     private lateinit var mUserName : String
+
+    private lateinit var mSharedPreferences: SharedPreferences
 
     // declare the GoogleSignInClient
     lateinit var mGoogleSignInClient: GoogleSignInClient
@@ -68,6 +75,28 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         // pass the same server client ID used while implementing the LogIn feature earlier.
 
         navView?.setNavigationItemSelectedListener(this)
+
+        mSharedPreferences = this.getSharedPreferences(
+            Constants.PROMANAGE_PREFERENCES,
+            Context.MODE_PRIVATE
+        )
+
+        val tokenUpdated = mSharedPreferences.getBoolean(
+            Constants.FCM_TOKEN,
+            false
+        )
+
+        if (tokenUpdated){
+            showProgressDialog("Please Wait")
+            FirestoreClass().loadUserData(this,true)
+        }else{
+            FirebaseMessaging.getInstance()
+                .token
+                .addOnCompleteListener(this){
+                    updateFCMToken(it.result.toString())
+                }
+
+        }
 
         FirestoreClass().loadUserData(this,true)
 
@@ -153,9 +182,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     PROFILE_UPDATE_REQUEST_CODE)
             }
             R.id.nav_sign_out -> {
-
                 FirebaseAuth.getInstance()
                     .signOut()
+                mSharedPreferences.edit().clear().apply()
                 mGoogleSignInClient.signOut().addOnCompleteListener{
                     val intent= Intent(this, IntroActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -169,7 +198,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     fun updateNavigationUserDetails(user: User,readBoardsList : Boolean) {
-
         mUserName = user.name
 
         ivUserImage = findViewById(R.id.iv_user_image)
@@ -190,6 +218,23 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             FirestoreClass().getBoardsList(this)
         }
 
+    }
+
+    fun tokenUpdateSuccess() {
+        val editor : SharedPreferences.Editor = mSharedPreferences.edit()
+        editor.putBoolean(Constants.FCM_TOKEN_UPDATED, true)
+        editor.apply()
+        hideProgressDialog()
+
+        FirestoreClass().loadUserData(this,true)
+    }
+
+    private fun updateFCMToken(token : String){
+        val userHashMap = HashMap<String,Any>()
+        userHashMap[Constants.FCM_TOKEN] = token
+        FirestoreClass().updateUserProfileData(
+            this,userHashMap
+        )
     }
 
     //another approach but not clean

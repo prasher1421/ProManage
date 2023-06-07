@@ -26,7 +26,7 @@ class TaskListActivity : BaseActivity() {
     private var mBoardDocumentId : String? = null
 
     private lateinit var mBoardDetails : Board
-    private lateinit var mAssignedMemberDetailsList : ArrayList<User>
+    lateinit var mAssignedMemberDetailsList : ArrayList<User>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,21 +88,8 @@ class TaskListActivity : BaseActivity() {
 
     fun boardDetails(board: Board) {
         mBoardDetails = board
-
-        hideProgressDialog()
         setupActionBar()
 
-        val addTaskList = Task(getString(R.string.action_add_list))
-        board.taskList.add(addTaskList)
-
-        rvTaskList = findViewById(R.id.rv_task_list)
-        rvTaskList?.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,true)
-        rvTaskList?.setHasFixedSize(true)
-
-        val adapter = TaskListItemsAdapter(this,board.taskList)
-        rvTaskList?.adapter = adapter
-
-        showProgressDialog("Please Wait")
         FirestoreClass().getAssignedMembersListDetails(
             this,
             mBoardDetails.assignedTo
@@ -182,7 +169,25 @@ class TaskListActivity : BaseActivity() {
     fun boardAssignedMemberDetailsList(list : ArrayList<User>){
         mAssignedMemberDetailsList = list
 
+        val addTaskList = Task(getString(R.string.action_add_list))
+        mBoardDetails.taskList.add(addTaskList)
+
+        rvTaskList = findViewById(R.id.rv_task_list)
+        rvTaskList?.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,true)
+        rvTaskList?.setHasFixedSize(true)
+
+        val adapter = TaskListItemsAdapter(this,mBoardDetails.taskList)
+        rvTaskList?.adapter = adapter
+
         hideProgressDialog()
+    }
+
+    fun updateCardsInTaskList(taskListPosition : Int, cards : ArrayList<Card>){
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size - 1)
+        mBoardDetails.taskList[taskListPosition].cards = cards
+
+        showProgressDialog("Please Wait")
+        FirestoreClass().addUpdateTaskList(this,mBoardDetails)
     }
 
     companion object {

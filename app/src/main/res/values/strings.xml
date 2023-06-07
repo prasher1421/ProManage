@@ -48,4 +48,5 @@
     <string name="label_color">Label Color</string>
     <string name="delete_card">Delete Card</string>
     <string name="select_label_color">Select Label Color</string>
+    <string name="default_notification_channel_id">promanage_notification_channel_id</string>
 </resources>
