@@ -1,10 +1,9 @@
 # ProManage
 ## Manage Team Projects
-Manage projects, organize tasks, and build team collaboration—all in one place.
-ProManage helps teams move work forward.
-ProManage is the flexible work management tool that empowers all teams to plan, track, and accomplish their work, their way.
-
-Whether you’re planning a website design project, or onboarding a new employee, it is infinitely customizable and flexible for every type of work.
+- Manage projects, organize tasks, and build team collaboration—all in one place.
+- ProManage helps teams move work forward.
+- ProManage is the flexible work management tool that empowers all teams to plan, track, and accomplish their work, their way.
+- Whether you’re planning a website design project, or onboarding a new employee, it is infinitely customizable and flexible for every type of work.
 
 ## Getting Started
 
@@ -25,9 +24,9 @@ Just follow the link [Download](https://drive.google.com/file/d/1qYovX97tN9Osh_B
 ![Android Studio](https://img.shields.io/badge/Android%20Studio-3DDC84.svg?style=for-the-badge&logo=android-studio&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
 
-Kotlin Android was used to develop the app.
-Authentication and Storage is mantained in online database (Firebase and Firestore).
-Notification System is enabled by Firebase Cloud Messaging.
+- Kotlin Android was used to develop the app.
+- Authentication and Storage is mantained in online database (Firebase and Firestore).
+- Notification System is enabled by Firebase Cloud Messaging.
 
 ## Contributing
 
