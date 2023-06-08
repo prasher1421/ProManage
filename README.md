@@ -21,6 +21,9 @@ Requirements for the software and other tools to build, test and push
 Just follow the link [Download](https://drive.google.com/file/d/1qYovX97tN9Osh_B8lAV1v2LiuoqA6umM/view?usp=sharing)
 
 ## Built With
+![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
+![Android Studio](https://img.shields.io/badge/Android%20Studio-3DDC84.svg?style=for-the-badge&logo=android-studio&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
 
 Kotlin Android was used to develop the app.
 Authentication and Storage is mantained in online database (Firebase and Firestore).
